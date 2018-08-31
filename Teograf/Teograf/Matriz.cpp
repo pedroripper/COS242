@@ -29,7 +29,11 @@ Matriz::Matriz(string path)
 
 	// aloca espaço para o vetor de tamanho igual ao numero de vertices +1, para nõ precisarmos
 	//nos preocupar com o 0.
-	m_numero_de_arestas = 0;
+
+	m_numero_de_arestas = 0;  //inicializando numero de arestas como zero
+
+	
+	Grafo::m_grau = new int[m_numero_de_vertices + 1](); //criando array de graus
 
 	string s;
 	//guarda cada linha do arquivo
@@ -45,15 +49,11 @@ Matriz::Matriz(string path)
 		}
 	}
 
-	m_grau_medio = (float)m_numero_de_arestas / m_numero_de_vertices;
-	m_numero_de_arestas = m_numero_de_arestas / 2;
 
 	cout << endl << "Leitura ocorreu com sucesso" << endl;
 
 
-	//criando array de graus e ordenando e obtendo infos
-	Grafo::m_grau = new int[m_numero_de_vertices + 1]();
-	this->Grau();
+	// ordenando array de graus e obtendo infos
 	Grafo::mergeSort(Grafo::m_grau, 1, m_numero_de_vertices);
 	Grafo::Infos();
 
@@ -79,8 +79,10 @@ Matriz::Matriz(string path)
 
 void Matriz::addAresta(int linha, int coluna)
 {
+	
 	m_matriz[linha][coluna] = true;
 	m_numero_de_arestas++;
+	Grafo::m_grau[linha]++;
 	return;
 }
 
@@ -114,20 +116,4 @@ Matriz::~Matriz()
 	delete[]m_matriz;
 }
 
-
-void Matriz::Grau()
-{
-	int grau = 0;
-	for (int i = 1; i <= m_numero_de_vertices; i++)
-	{
-		for (int j = 1; j <= m_numero_de_vertices; j++)
-		{
-			if (m_matriz[i][j] == true) grau++;	
-		}
-
-		Grafo::m_grau[i] = grau;
-		grau = 0;
-	}
-	return;
-}
 

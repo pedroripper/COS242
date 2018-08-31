@@ -12,6 +12,7 @@ private:
 	bool** m_matriz;
 	void addAresta(int i, int j);
 	int *m_grau;
-	void Grau();
+
+
 };
 
