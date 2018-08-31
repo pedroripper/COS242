@@ -20,10 +20,12 @@ public:
 
 	Lista(string path);
 	~Lista();
-
+	
 protected:
 
 	void addAresta(int de, int para);
 	ListNode** m_pLista;
+	void Grau();
+
 };
 

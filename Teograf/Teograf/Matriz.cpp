@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Lista.h"
+#include "Matriz.h"
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -8,20 +8,24 @@
 using namespace std;
 
 
-Lista::Lista(string path)
+Matriz::Matriz(string path)
 {
 	ifstream myFile;
 	myFile.open(path);
 	cout << endl << "Lendo arquivo " << path << " Por favor aguarde." << endl;
 	if (!myFile)
-//Se o arquivo não existir
+		//Se o arquivo não existir
 	{
 		cout << "Arquivo " << path << " Nao foi encontrado.";
 		return;
 	}
-	myFile >> m_numero_de_vertices;
-// Salva o numero de vertices totais do grafo
-	m_pLista = new ListNode*[m_numero_de_vertices + 1]();
+
+	myFile >> m_numero_de_vertices;    	// Salva o numero de vertices totais do grafo
+
+	
+
+	this->construtor();       //chama a função para construir a matriz
+
 
 	// aloca espaço para o vetor de tamanho igual ao numero de vertices +1, para nõ precisarmos
 	//nos preocupar com o 0.
@@ -40,17 +44,19 @@ Lista::Lista(string path)
 			this->addAresta(v2, v1);
 		}
 	}
-	
 
-	//criando array de graus e ordenando e obtendo infos
-	Grafo::m_grau = new int[m_numero_de_vertices+1]();
-	this->Grau();
-	Grafo::mergeSort(Grafo::m_grau, 1, m_numero_de_vertices); 
-	Grafo::Infos();
-
-
+	m_grau_medio = (float)m_numero_de_arestas / m_numero_de_vertices;
+	m_numero_de_arestas = m_numero_de_arestas / 2;
 
 	cout << endl << "Leitura ocorreu com sucesso" << endl;
+
+
+	//criando array de graus e ordenando e obtendo infos
+	Grafo::m_grau = new int[m_numero_de_vertices + 1]();
+	this->Grau();
+	Grafo::mergeSort(Grafo::m_grau, 1, m_numero_de_vertices);
+	Grafo::Infos();
+
 
 	ofstream myInfoFile;
 	myInfoFile.open(m_savePath + "/info.txt");
@@ -63,51 +69,36 @@ Lista::Lista(string path)
 
 	//TODO incluir informações sobre componentes conexas
 
-	
+
 
 	cout << "Analise salva em " << m_savePath << "/info.txt" << endl;
 
+
 }
 
 
-
-//constroi uma aresta
-void Lista::addAresta(int de, int para)
+void Matriz::addAresta(int linha, int coluna)
 {
-	ListNode* no = new ListNode;
-	no->vertice = para;
-	if (m_pLista[de] != NULL)
-	{
-		m_pLista[de]->pPrev = no;
-	}
-	no->pNext = m_pLista[de];
-	no->pPrev = NULL;
-	this->m_pLista[de] = no;
-
+	m_matriz[linha][coluna] = true;
 	m_numero_de_arestas++;
+	return;
 }
 
 
 
-
-void Lista::Grau()
+void Matriz::construtor()
 {
 
-	int grau = 0;
-	ListNode* temp;
-	for (int i = 1; i <= m_numero_de_vertices; i++)
-	{
-		for (ListNode* neigh = m_pLista[i]; neigh != NULL;)
-		{
-			temp = neigh;
-			neigh = neigh->pNext;
-			grau++;
+	m_matriz = new bool*[m_numero_de_vertices+1];
 
-		}
+	for (int i = 0; i < m_numero_de_vertices + 1; ++i)
+		
+		m_matriz[i] = new bool[m_numero_de_vertices];
 
-		Grafo::m_grau[i] = grau;
-		grau = 0;
-	}
+	//iniciando ela com zero
+	for (int i = 0; i < m_numero_de_vertices; ++i)
+		for (int j = 0; j < m_numero_de_vertices; ++j)
+			m_matriz[i][j] = false;
 
 	return;
 }
@@ -115,19 +106,28 @@ void Lista::Grau()
 
 
 
-Lista::~Lista()
+Matriz::~Matriz()
 {
-	ListNode* temp;
+	for (int i = 0; i < m_numero_de_vertices; ++i)
+		delete[]m_matriz[i];
+
+	delete[]m_matriz;
+}
+
+
+void Matriz::Grau()
+{
+	int grau = 0;
 	for (int i = 1; i <= m_numero_de_vertices; i++)
 	{
-		for (ListNode* neigh = m_pLista[i]; neigh != NULL;)
+		for (int j = 1; j <= m_numero_de_vertices; j++)
 		{
-			temp = neigh;
-			neigh = neigh->pNext;
-			delete temp;
-
+			if (m_matriz[i][j] == true) grau++;	
 		}
+
+		Grafo::m_grau[i] = grau;
+		grau = 0;
 	}
-	delete[] m_pLista;
+	return;
 }
 
