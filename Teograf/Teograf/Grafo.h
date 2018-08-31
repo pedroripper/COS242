@@ -4,6 +4,13 @@
 
 using namespace std;
 
+struct Arvore
+{
+	int vertice;
+	int nivel;
+	Arvore* ppai;
+
+}; 
 class Grafo
 {
 public:

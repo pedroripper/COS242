@@ -72,6 +72,27 @@ Matriz::Matriz(string path)
 
 
 	cout << "Analise salva em " << m_savePath << "/info.txt" << endl;
+	cout << endl << "Deseja rodar BFS ou DFS?" << endl;
+	string escolha;
+	cin >> escolha;
+	if (escolha == "BFS")
+	{
+		int vertice;
+		cout << "Escolha um vertice:" << endl;
+		cin >> vertice;
+		cout << "Rodando BFS..." << endl;
+		BFS_Matriz(vertice);
+		cout << "Processo concluido." << endl;
+	}
+	if (escolha == "DFS")
+	{
+		int vertice;
+		cout << "Escolha um vertice:" << endl;
+		cin >> vertice;
+		cout << "Rodando DFS..." << endl;
+		DFS_matriz(vertice);
+		cout << "Processo concluido." << endl;
+	}
 
 
 }
@@ -116,4 +137,117 @@ Matriz::~Matriz()
 	delete[]m_matriz;
 }
 
+
+
+
+// BFS
+
+void Matriz::BFS_Matriz(int s)
+{
+	m_vetor_de_marcacao = new int[m_numero_de_vertices + 1](); //inicializa vetor de marcação
+
+	while (!fila.empty())   //cofere que a fila estara vazia
+	{
+		fila.pop();
+	}
+
+
+	Arvore* raiz = new Arvore;
+	raiz->vertice = s;
+	raiz->nivel = 0;
+	raiz->ppai = NULL;
+
+	ofstream myBFSFile;
+	myBFSFile.open(m_savePath + "/matriz_BFS.txt");
+	myBFSFile << "Vertice: " << raiz->vertice << ", Nivel: " << raiz->nivel
+		<< ", Pai: - " << endl;
+
+	m_vetor_de_marcacao[s] = 1;    //marca vetor s
+	fila.push(raiz);               //bota s na fila
+
+	while (!fila.empty())
+	{
+		Arvore* v = fila.front();       //le elemento da fila
+		fila.pop();                         // tira elemento da fila
+
+		
+		for (int w=1; w<m_numero_de_vertices;w++ )
+		{
+			if (m_matriz[v->vertice][w]==true)
+				if (m_vetor_de_marcacao[w] == 0)     //se w não estiver marcado
+				{
+					m_vetor_de_marcacao[w] = 1;//marca w
+
+					Arvore* x = this->Parentesco(v, w);  // cria relacionameneto entre os vertices
+
+													 //imprime informações sobre a arvore
+					myBFSFile << "Vertice: " << x->vertice << ", Nivel: " << x->nivel
+						<< ", Pai: " << v->vertice << endl;
+
+					fila.push(x);                   //coloca w na lista
+				}
+			}
+		}
+}
+
+
+
+
+//DFS
+void Matriz::DFS_matriz(int s)
+{
+	m_vetor_de_marcacao = new int[m_numero_de_vertices + 1](); //inicializa vetor de marcação
+	while (!pilha.empty())   //cofere que a pilha estara vazia
+	{
+		pilha.pop();
+	}
+	Arvore* raiz = new Arvore;
+	raiz->vertice = s;
+	raiz->nivel = 0;
+	raiz->ppai = NULL;
+
+	ofstream myDFSFile;
+	myDFSFile.open(m_savePath + "/matriz_DFS.txt");
+
+	pilha.push(raiz);               //bota s na pilha
+	while (!pilha.empty())
+	{
+		Arvore* u = pilha.top();       //le elemento da fila
+		pilha.pop();  // tira elemento da fila
+		if (m_vetor_de_marcacao[u->vertice] == 0)
+		{
+			//imprime informações sobre a arvore
+			myDFSFile << "Vertice: " << u->vertice << ", Nivel: " << u->nivel
+				<< ", Pai: " << u->vertice << endl;
+
+			m_vetor_de_marcacao[u->vertice] = 1;    //marca vetor s
+			for (int w = 1; w < m_numero_de_vertices; w++)
+			{
+				if (m_matriz[u->vertice][w] == true)
+				{
+					Arvore* x = this->Parentesco(u, w);  // cria relacionameneto entre os vertices
+					pilha.push(x);
+				}
+			}
+
+		}
+	}
+
+	return;
+}
+
+
+
+
+Arvore* Matriz::Parentesco(Arvore* v, int w)
+{
+	Arvore* filho = new Arvore;
+	filho->vertice = w;
+	int nivel_pai = v->nivel;
+	filho->nivel = nivel_pai + 1;
+	filho->ppai = v;
+
+
+	return filho;
+}
 
