@@ -25,6 +25,7 @@ private:
 	void DFS_matriz(int s);
 	Arvore * Parentesco(Arvore * v, int w);
 
+    std::chrono::time_point<std::chrono::system_clock> start, end;
 
 
 };

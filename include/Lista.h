@@ -6,7 +6,8 @@
 #include <queue>
 #include <stack>
 #include <list>
-
+#include <chrono>
+using namespace std::chrono;
 using namespace std;
 
 
@@ -47,6 +48,8 @@ protected:
 	int m_x;
 	int m_maior_tamanho=0;
 	bool etapa;
+
+    std::chrono::time_point<std::chrono::system_clock> start, end;
 
 	Arvore* Parentesco(Arvore* v, int w);
 

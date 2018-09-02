@@ -1,5 +1,4 @@
 #include "Matriz.h"
-
 #include "Matriz.h"
 #include <iostream>
 #include <string>
@@ -11,7 +10,10 @@ using namespace std;
 
 Matriz::Matriz(string path)
 {
+
 	ifstream myFile;
+    start = std::chrono::system_clock::now();
+
 	myFile.open(path);
 	cout << endl << "Lendo arquivo " << path << " Por favor aguarde." << endl;
 	if (!myFile)
@@ -48,11 +50,11 @@ Matriz::Matriz(string path)
 			this->addAresta(v1, v2);
 			this->addAresta(v2, v1);
 		}
-	}
-
+    end = std::chrono::system_clock::now();
+    int elapse_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
 
 	cout << endl << "Leitura ocorreu com sucesso" << endl;
-
+    cout<< "Tempo de Execucao: " << elapse_seconds << " Milissegundos" << endl;
 
 	// ordenando array de graus e obtendo infos
 	Grafo::mergeSort(Grafo::m_grau, 1, m_numero_de_vertices);
@@ -71,8 +73,8 @@ Matriz::Matriz(string path)
 	//TODO incluir informações sobre componentes conexas
 
 
-
 	cout << "Analise salva em " << m_savePath << "/info.txt" << endl;
+
 
 	m_vetor_de_marcacao = new int[m_numero_de_vertices + 1](); //inicializa vetor de marcação
 
@@ -99,7 +101,7 @@ Matriz::Matriz(string path)
 	}
 
 
-}
+}}
 
 
 void Matriz::addAresta(int linha, int coluna)

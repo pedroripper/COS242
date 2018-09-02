@@ -11,6 +11,8 @@ using namespace std;
 Lista::Lista(string path)
 {
 	ifstream myFile;
+
+	start = std::chrono::system_clock::now();
 	myFile.open(path);
 	cout << endl << "Lendo arquivo " << path << " Por favor aguarde." << endl;
 	if (!myFile)
@@ -49,11 +51,11 @@ Lista::Lista(string path)
 	Grafo::mergeSort(Grafo::m_grau, 1, m_numero_de_vertices);
 	Grafo::Infos();
 
-
+    end = std::chrono::system_clock::now();
+    int elapse_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count();
 
 	cout << endl << "Leitura ocorreu com sucesso" << endl;
-
-
+    cout<< "Tempo de Execucao: " << elapse_seconds << " Milissegundos" << endl;
 	m_vetor_de_marcacao = new int[m_numero_de_vertices + 1](); //inicializa vetor de marcação
 
 	cout << "Por favor Aguarde" <<endl ;
@@ -102,10 +104,8 @@ Lista::Lista(string path)
 	}
 	myInfoFile << endl << endl;
 
-
-
-
 	cout << "Analise salva em " << m_savePath << "/info.txt" << endl;
+
 
 	cout << endl << "Deseja rodar BFS ou DFS?" << endl;
 	string escolha;
